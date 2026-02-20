@@ -1,0 +1,26 @@
+---
+description: Context engineering best practices for LLM applications
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+---
+
+# Context Engineering Rules
+
+## Segment Ordering
+- Place static segments (system prompt, few-shot examples) before volatile segments (RAG, conversation history, user message)
+- This maximizes prompt cache hit rates across providers
+
+## Cache-Friendly Patterns
+- Keep system prompts identical across requests
+- Use deterministic few-shot example selection
+- Place RAG context after static segments but before conversation history
+- The user message should always be last
+
+## Segment Types
+- `system_prompt` — Static instructions (highest cache potential)
+- `few_shot_example` — Static examples (high cache potential)
+- `rag_chunk` — Retrieved context (volatile per query)
+- `conversation_history` — Chat history (always volatile)
+- `user_message` — Current input (always volatile)
+- `tool_output` — Tool results (volatile)
+- `metadata` — Structured context
+- `guardrail` — Safety constraints
